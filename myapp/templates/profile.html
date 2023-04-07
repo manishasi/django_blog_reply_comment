@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+<title>{% block title %}Profile{% endblock %}</title>
+    
+    {% block content %}
+    <div  class="container mt-3">
+       <h1 style=color:blue>Profile</h1>
+    <div class="im">
+      
+      {% for i in details %}
+      <h2 style=color:black>Welcome {{user_details.username}}</h2>
+      <div ><img src="{{i.picture.url}}" alt="" /></div>
+      <div class="text">
+      {% for j in user_details %}
+        <h2>Username:{{j.username}}</h2>
+        <h2>Email Id:{{j.email}}</h2>
+      {% endfor %}
+        <h2>Firstname:{{i.first_name}}</h2>
+        <h2>Lastname:{{i.last_name}}</h2>
+        <h2>DOB:{{i.dob}}</h2>
+        <h2>Place:{{i.place}}</h2>
+        <h2>Zipcode:{{i.zipcode}}</h2>
+       
+      </div>
+    </div>
+    </div>
+    {% endfor %}
+   </div>
+   {% endblock %}
+    
+

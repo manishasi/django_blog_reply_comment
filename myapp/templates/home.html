@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+<title>{% block title %}home{% endblock %}</title>
+
+{% block content %}
+<style>/*
+.like-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+}
+.like-btn:hover {
+color: yellow;
+}*/
+
+a,button {
+    display: inline;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+</style>
+
+  <div  class="container mt-3">
+    <h4 style=color:blue>Home Page</h4>
+      {% if posts %}
+      {% for post in posts %}
+  <div class="post">
+      <h3><a href="{% url 'post_view' post.id %}">{{ post.title }}</a></h3>
+      <img src="{{post.image.url}}" alt="image" />
+      {% comment %} <p>{{ post.content }}</p> {% endcomment %}
+      <p>Author: {{ post.author }}</p>
+      <p>Date: {{ post.created_at }}</p>
+      <h4><p>Total comment {{ post.comments.all|length }}</p></h4>
+      <p>Views: {{ post.views}}</p>
+      
+
+      
+      {% comment %} <div>
+        <form action="{% url 'post_view' post.id %}" >
+          <p>Views: {{ post.viewers.all|length }}</p>
+        </form>
+      </div>
+      {% endcomment %}
+
+  </div> 
+      <form class="form" action="{% url 'like_post' post.id %}" method="post" novalidate >
+        {% csrf_token %}
+        {% if user_id %}
+        {% if post.title in liked_list %}
+        <button class="btn btn-dark" class="like-btn" type="submit"><i class="fa-solid fa-thumbs-down"></i>Dislike</button>
+        {% else %}
+        <button class="btn btn-info"  class="like-btn" type="submit"><i class="fa-solid fa-thumbs-up"></i>Like</button>
+        {% endif %}
+        {% else %}
+        <button class="btn btn-primary"  class="like-btn" type="submit"><i class="fa-solid fa-thumbs-up"></i>Like</button>
+        {% endif %}
+        <p>Likes: {{ post.likes.count }}</p>
+      </form>
+
+
+        {% if post.author.user == user %}
+        <a href="{% url 'delete_post' post.id %}" data-inline="true" class="btn btn-danger"><i class="fa-solid fa-trash"></i>Delete</a><br><br>
+        {% endif %}
+
+
+        <h3>Comment:</h3>
+        <form method="post" action="{% url 'comment_view' post.id %}">
+              {% csrf_token %}
+              {{ comment_form.as_p }}
+              <button type="submit" class="btn btn-secondary">Comment</button>
+        </form>
+        {% comment %} {% if comment %}
+        <div class="row mt-5">
+          <div class="col-lg-6 offset-lg-3">
+            Comment{{ comment.count|pluralize }}
+            <span class="badge badge-dark ml-2">{{ comment.count }}</span>
+          </div>
+          {% endif %} {% endcomment %}
+        {% comment %} <a class="btn btn-primary" href="{% url 'comment_view' post.id %}"><i class="fa-solid fa-comments"></i>Comment</a> {% endcomment %}
+        <hr>     
+
+                  {% if post.comments.all %}
+                  {% for comment in post.comments.all%}
+                  <h2><p>Comment: {{ comment.comment_body }} </p></h2>
+
+                  <h4><p>Total reply:{{ comment.replies.all|length }}</p></h4>
+
+                  <form action="{% url 'like_comment' comment.id %}" method="post" novalidate>
+                    {% csrf_token %}
+                    {% if user.is_authenticated %}
+                    {% if user in comment.likes.all %}
+                    <button class="btn btn-dark" class="like-btn" type="submit"><i class="fa-solid fa-thumbs-down"></i>Dislike</button>
+                    {% else %}
+                  <button class="btn btn-primary"  class="like-btn" type="submit"><i class="fa-solid fa-thumbs-up"></i>Like</button>
+                {% endif %}
+              {% endif %}
+            <p>Likes: {{ comment.likes.count }}</p>
+            </form> 
+            {% if post.author.user == user %}
+            <a href="{% url 'delete_comment' comment.id %}" data-inline="true" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i>Delete</a><br><br>
+            {% endif %}
+    
+            {% comment %} <h4>Reply:</h4> {% endcomment %}
+                  <form method="post" action="{% url 'reply' comment.id %}">
+                      {% csrf_token %}
+                      {{ form.as_p }}
+                      <input type="hidden" name="parent" value="{{ reply.id }}">
+                      <input class="btn btn-sm btn-warning" type="submit" value="Reply">
+                  </form>
+                
+                    {% for reply in comment.replies.all %}
+                    <p class="info">{{ reply.author }} | {{ reply.created_at }}</p>
+                    <li>{{ reply.reply_body }}</li>
+
+
+
+
+
+{% comment %} <!-- Comments Form --> 
+<h2>reply on reply</h2>
+<form action="{% url 'reply' reply.id %}" method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <button type="submit">replay</button>
+</form> {% endcomment %}
+
+{% comment %} {% for replay in comment.replies.all %}
+            <p class="info">{{ replay.name }} | {{ replay.created_at }}</p>
+            <li>{{ replay.body }}</li>
+        {% endfor %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} <!-- Comment with nested comments -->
+{% for comment in comments %}
+    <div class="comment" style="background-color: powderblue">
+        <p class="info">{{ comment.name }} | {{ comment.created }}</p>
+            {{ comment.body|linebreaks }}
+
+        {% for replay in comment.replies.all %}
+            <p class="info">{{ replay.name }} | {{ replay.created }}</p>
+            <li>{{ replay.body }}</li>
+        {% endfor %}
+
+        <h5>Replay</h5>
+        <form action="." method="post">
+            {{ comment_form.as_p }}
+            {% csrf_token %}
+            <!-- Hidden input for parent comment.id -->
+            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+            <input class="btn btn-primary" type="submit" value="Replay">
+        </form>
+    </div>
+{% empty %}
+<h4>There are no comments yet.</h4>
+{% endfor %}
+ {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+                   
+                    <form action="{% url 'like_reply' reply.id %}" method="post" novalidate>
+                      {% csrf_token %}
+                      {% if user.is_authenticated %}
+                      {% if user in reply.likes.all %}
+                      <button class="btn btn-sm btn-success" class="like-btn" type="submit"><i class="fa-solid fa-thumbs-down"></i>Dislike</button>
+                      {% else %}
+                    <button class="btn btn-sm btn-primary"  class="like-btn" type="submit"><i class="fa-solid fa-thumbs-up"></i>Like</button>
+                  {% endif %}
+                {% endif %}
+              <p>Likes: {{ reply.likes.count }}</p>
+              </form> 
+              {% if post.author.user == user %}
+              <a href="{% url 'delete_reply' reply.id %}" data-inline="true" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i>Delete</a><br><br>
+              {% endif %}
+              <hr>
+                {% endfor %}
+
+
+                
+                {% comment %} <button type="submit" class="btn btn-primary">Reply</button>
+                        {% comment %} <div class="form-group">
+                          <label for="content">Reply:<textarea id="body" name="body" class="form-control"></textarea></label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button> {% endcomment %}
+                  {% comment %} <hr>  {% endcomment %}
+                  {% comment %} {% endfor %} {% endcomment %}
+              {% endfor %}
+         {% else %}
+         <p>There is no Comment</p>
+         {% endif %}
+      {% endfor %}
+    {% else %}
+  <p>No posts found.</p>
+  {% endif %} 
+  </div>
+{% endblock %}
+

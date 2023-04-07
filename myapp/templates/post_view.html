@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+<div class="post">
+    <h3>{{ post.title }}</h3>
+    <img src="{{post.image.url}}" alt="image" />
+    {% comment %} <p>{{ post.content }}</p> {% endcomment %}
+    <p>Author: {{ post.author }}</p>
+    <p>Date: {{ post.created_at }}</p>
+    <p>Likes: {{ post.likes.count }}</p>
+    <p>Views: {{ post.views}}</p>
+    <p>Total comment {{ post.comments.all|length }}</p>
+</div> 
+  
+
+
+
+       
+
+
+{% endblock content %}

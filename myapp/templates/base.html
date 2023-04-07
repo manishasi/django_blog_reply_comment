@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+{% load static  %}
+<html>
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+  {% comment %} <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> {% endcomment %}
+<style>
+  
+  nav {
+    background-color: black;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    position: relative;
+    z-index: 2;
+  }
+  nav ul li {
+    padding-top: 10px;
+    display: inline-block;
+    list-style: none;
+    margin: 10px 30px;
+  }
+  nav ul li a {
+    text-decoration: none;
+    color:yellow;
+  }
+  .text {
+    color:blue; 
+     /*position: absolute;
+    display: inline-block;
+    text-decoration: none;
+    color: white;
+    background-color: red;
+    padding: 10px 30px;
+    margin-top: 100px;
+    border-radius: 8px;
+    border-color: black;
+    top: 10px;
+    right: 50%;
+    z-index: 1; */
+  }
+  img {
+        height: 300px;
+        width: 300px;
+      }
+      nav {
+        background-color: black;
+        width: 100%;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 0;
+        position: relative;
+        z-index: 2;
+      }
+      nav ul li {
+        padding-top: 10px;
+        display: inline-block;
+        list-style: none;
+        margin: 10px 30px;
+
+      }
+      nav div ul li a {
+         text-decoration: none;
+         color: yellow;
+      }
+      h2 {
+        font-size: 18px;
+        margin-bottom: 20px;
+        text-color: brown;
+      }
+      
+</style>
+</head>
+<body  style=background-color:white>
+  <nav>
+  <div class='container'>
+
+    {% if user.is_authenticated %}
+    <ul>
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'profile' %}">Profile</a></li>
+      <li><a href="{% url 'update' %}">Update</a></li>
+      <li><a href="{% url 'create_post' %}">Create Post</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+    {% else %}
+    <ul>
+    {% comment %} <li><a href="{% url 'home' %}">Home</a></li> {% endcomment %}
+    <li><a href="{% url 'login' %}">Login</a></li>
+    <li><a href="{% url 'register' %}">Sing Up</a></li>
+  </ul>
+    {% endif %}
+  </div>
+  </nav>
+  {% if user.is_authenticated %}
+  <h2 style=color:black>Welcome {{user.username}}</h2>
+  {% endif %}
+  {% block content %}
+  {% endblock %}
+  <script src="{% static 'js/jquery.js' %}"></script>
+  <script src="{% static 'js/poper.js' %}"></script>
+  <script src="{% static 'js/all.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>
